@@ -241,5 +241,4 @@ let main list_points =
 				done;
 				done
 		) tab;
-		grph
-
+		grph, itopt, pttoi
