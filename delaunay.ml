@@ -72,16 +72,16 @@ let init_tri (coord_a,opp_a) (coord_b,opp_b) (coord_c,opp_c) =
             {coord = coord_b;opp = opp_b};
             {coord = coord_c;opp = opp_c}|]}
 
-let in_circumscribed (a,b) ((c,d),(e,f),(g,h)) =        
+let in_circumscribed (a,b) ((c,d),(e,f),(g,h)) =
     sgn @@ det (e-c,f-d) (g-c,h-d) * sgn (det_three
     [|[|c-a;e-a;g-a|];
     [|d-b;f-b;h-b|];
     [|c*c-a*a + d*d-b*b;e*e-a*a + f*f-b*b;g*g-a*a+h*h-b*b|]|])
 
-let have_to_be_switched triangle_to_test i = 
+let have_to_be_switched triangle_to_test i =
     let tri = !triangle_to_test in
     let vois_opp = !(tri.ver.(i).opp) in
-        (not vois_opp.is_empty) && (in_circumscribed tri.ver.(i).coord 
+        (not vois_opp.is_empty) && (in_circumscribed tri.ver.(i).coord
         (vois_opp.ver.(0).coord,vois_opp.ver.(1).coord,vois_opp.ver.(2).coord) > 0)
 
 let replace_by_in replaced replacing tri =
@@ -97,7 +97,7 @@ let index_opp i tri =
             then -1
             else if (!tri').ver.(0).opp == tri
                 then 0
-                else if (!tri').ver.(1).opp == tri 
+                else if (!tri').ver.(1).opp == tri
                     then 1
                     else 2
 
@@ -160,7 +160,7 @@ let rec in_which_triangle x = function
 let insert x l =
     let rec aux = function
         | [] -> ()
-        | tri::q -> begin 
+        | tri::q -> begin
                 if (!tri).suiv = []
                     then if have_to_be_switched tri 0
                         then aux @@ (switch tri 0)@q
@@ -183,15 +183,15 @@ dans l'un de ces deux triangles *)
 let rec delaunay = function
     | [] -> begin
         let nul = ref {emplacement= -1;is_empty=true; suiv = [];ver= [||]} in
-        let tri1 = ref @@ init_tri ((min_abs,max_ord),nul) 
+        let tri1 = ref @@ init_tri ((min_abs,max_ord),nul)
     ((min_abs,min_ord),nul) ((max_abs,max_ord),nul)
-    and tri2 = ref @@ init_tri ((max_abs,min_ord),nul) 
+    and tri2 = ref @@ init_tri ((max_abs,min_ord),nul)
     ((max_abs,max_ord),nul) ((min_abs,min_ord),nul)
     in (!tri1).ver.(0).opp <- tri2;
             (!tri2).ver.(0).opp <- tri1;
             [tri1;tri2]
         end
-    | t::q -> let l = delaunay q in 
+    | t::q -> let l = delaunay q in
         (insert t l;l)
 
 (* Fin de la triangulation *)
@@ -199,7 +199,7 @@ let rec delaunay = function
 Delaunay correspondante, où chaque triangle a été numéroté (numérotation conservée au
 niveau de la valeur "emplacement") *)
 let pts_to_tab list_points =
-    let counter = ref 0 and res = ref [] and l = delaunay list_points 
+    let counter = ref 0 and res = ref [] and l = delaunay list_points
     in
     let rec aux = function
         | t::q when (!t).emplacement = -1 -> begin
@@ -216,29 +216,29 @@ let add_aux a b grph =
     IMap.add a (b::(try IMap.find a grph with Not_found -> [])) grph
 
 let add a b grph =
-	grph := add_aux a b !grph;
-	grph := add_aux b a !grph
+    grph := add_aux a b !grph;
+    grph := add_aux b a !grph
 
 let main list_points =
-	let cpt = ref 0 in
-	let itopt = ref IMap.empty in
-	let pttoi = List.fold_left (fun x y ->
-		let ans = IPMap.add y !cpt x in
-			itopt := IMap.add !cpt y !itopt;
-			incr cpt;
-			ans
-		) IPMap.empty list_points
-	in
-	let tab = pts_to_tab list_points in
-	let grph : int list IMap.t ref = ref IMap.empty in
-		List.iter (fun tri ->
-			let vertices = tri.ver in
-				for i = 0 to 1 do
-				for j = i + 1 to 2 do
-					add (IPMap.find vertices.(i).coord pttoi)
-						(IPMap.find vertices.(j).coord pttoi)
-						grph 
-				done;
-				done
-		) tab;
-		grph, itopt, pttoi
+    let cpt = ref 0 in
+    let itopt = ref IMap.empty in
+    let pttoi = List.fold_left (fun x y ->
+        let ans = IPMap.add y !cpt x in
+            itopt := IMap.add !cpt y !itopt;
+            incr cpt;
+            ans
+        ) IPMap.empty list_points
+    in
+    let tab = pts_to_tab list_points in
+    let grph : int list IMap.t ref = ref IMap.empty in
+        List.iter (fun tri ->
+            let vertices = tri.ver in
+                for i = 0 to 1 do
+                for j = i + 1 to 2 do
+                    add (IPMap.find vertices.(i).coord pttoi)
+                        (IPMap.find vertices.(j).coord pttoi)
+                        grph
+                done;
+                done
+        ) tab;
+        grph, itopt, pttoi
