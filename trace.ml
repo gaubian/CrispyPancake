@@ -48,11 +48,15 @@ let trans grph i itopt =
 let polygons grph itopt =
 	IMap.mapi (fun x _ -> trans grph x itopt) grph
 
-let trace grph i itopt =
-		Graphics.open_graph "";
+let trace grph itopt =
 	let pol = polygons grph itopt in
+		Graphics.set_color Graphics.black;
 		ignore @@ IMap.map Graphics.draw_poly pol
 
 let fill_col pol i col =
 	Graphics.set_color col;
 	Graphics.fill_poly (IMap.find i pol)
+
+let init grph itopt pol =
+	trace grph itopt;
+	List.iter (fun (i,colo) -> fill_col pol i colo)
