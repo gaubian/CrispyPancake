@@ -1,5 +1,9 @@
 open Graphics;;
-open Voronoi;;
+
+
+type seed = {c : Graphics.color option; x : int; y : int}
+type voronoi = {dim : int * int; seeds : seed array}
+
 
 (*some examples of voronoi*)
 let v1 = {

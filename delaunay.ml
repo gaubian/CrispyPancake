@@ -17,9 +17,6 @@ module PairInt = Pair(Int)(Int)
 module IPMap = Map.Make(PairInt)
 module IMap = Map.Make(Int)
 
-type color = A | B | C | D
-type seed = {c : color option; x : int; y : int}
-type voronoi = {dim : int * int; seeds : seed array}
 type grph = int list array
 
 let (min_abs, max_abs, min_ord, max_ord) = (-10001,10001,-10001,10001)
@@ -230,7 +227,7 @@ let main list_points =
         ) IPMap.empty list_points
     in
     let tab = pts_to_tab list_points in
-    let grph : int list IMap.t ref = ref IMap.empty in
+    let grph = ref IMap.empty in
         List.iter (fun tri ->
             let vertices = tri.ver in
                 for i = 0 to 1 do
@@ -241,4 +238,4 @@ let main list_points =
                 done;
                 done
         ) tab;
-        grph, itopt, pttoi
+        !grph, !itopt, pttoi
